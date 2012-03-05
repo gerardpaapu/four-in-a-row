@@ -57,7 +57,6 @@ Result =
     Unfinished: 'Unfinished'
 
 Board::result = ->
-    return Result.StaleMate if @playableColumns().length is 0
 
     for y in [0..@height-1]
         for x in [0..@width-1]
@@ -65,7 +64,10 @@ Board::result = ->
             if result != Result.Unfinished
                 return result 
 
-    Result.Unfinished
+    if @playableColumns().length is 0
+        Result.StaleMate
+    else 
+        Result.Unfinished
 
 Board::checkPositionForResult = (x, y) ->
     current = @get(x, y)
