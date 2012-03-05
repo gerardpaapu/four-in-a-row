@@ -7,16 +7,18 @@ chooseRandom = (arr) ->
     else 
         arr[ Math.floor(Math.random() * arr.length) ]
 
-
 game = new GameState new Board, Piece.Red
-console.log game.board.result()
-
-console.log game.board.toString()
-console.log '------'
 
 until game.isComplete()
-    game = chooseRandom( game.nextMoves() )
-    console.log game.board.toString()
-    console.log '-------'
+    moves = game.okayMoves()
 
+    if moves.length > 0 
+        game = chooseRandom( moves )
+    else 
+        console.log "#{game.player} concedes"
+        console.log '----------------'
+        break
+
+console.log game.board.toString()
+console.log '----------------'
 console.log game.board.result()

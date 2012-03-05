@@ -10,7 +10,7 @@ memoize = (fn) ->
         if table.hasOwnProperty(key)
             table[key]
         else
-            table[key] = fn args...
+            table[key] = fn.apply(@, args)
 
 class GameState
     constructor: (@board, @player) ->
@@ -41,25 +41,34 @@ class GameState
     
     isntWin: -> not @isWin()
 
-    isGood: memoize ->
-        @isWin() or @nextMoves().every (move) -> move.isBad()
+    isGood: memoize (depth=GameState.search_depth) ->
+        if depth is 0
+            false
+        else if @isWin() 
+            true
+        else
+            moves = @nextMoves()
+            moves.length > 0 and moves.every (move) -> move.isBad(depth - 1)
 
-    isBad: memoize ->
-        @isntWin() and @nextMoves().any (move) -> move.isGood()
+    isBad: memoize (depth=GameState.search_depth) ->
+        depth > 0 and @isntWin() and @nextMoves().some (move) -> move.isGood(depth - 1)
 
-    isOkay: -> not @isBad()
+    isOkay: (depth=GameState.search_depth) -> not @isBad(depth)
 
-    goodMoves: ->
-        @nextMoves.filter (move) -> move.isGood()
+    goodMoves: (depth=GameState.search_depth) ->
+        @nextMoves().filter (move) -> move.isGood(depth)
 
-    badMoves: ->
-        @nextMoves.filter (move) -> move.isBad()
+    badMoves: (depth=GameState.search_depth) ->
+        @nextMoves().filter (move) -> move.isBad(depth)
 
-    okayMoves: ->
-        @nextMoves.filter (move) -> move.isOkay()
+    okayMoves: (depth=GameState.search_depth) ->
+        @nextMoves().filter (move) -> move.isOkay(depth)
+
+    @search_depth: 5
 
     toString: ->
         @board.toString() + ':' + @player
+
 
 if typeof module != 'undefined' and module.exports
     module.exports.GameState = GameState 
