@@ -46,9 +46,9 @@ Position =
 
     sigilFor: (p) ->
         switch p
-            when Position.Red then 'O'
-            when Position.Yellow then 'X'
-            when Position.Empty then '_'
+            when Position.Red then 'R'
+            when Position.Yellow then 'Y'
+            when Position.Empty then '.'
 
 Result =
     RedWins: 'RedWins'
